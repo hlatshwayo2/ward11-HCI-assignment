@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Report Status - Ward 11 Connect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        .navbar {
+            background-color: #667eea;
+            color: white;
+            padding: 15px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .search-section {
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background-color: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover {
+            background-color: #764ba2;
+        }
+        .status-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .status-title {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .status-trace {
+            display: flex;
+            justify-content: space-around;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .status-trace::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #e0e0e0;
+        }
+        .status-item {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .status-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        .status-circle.active {
+            background-color: #27ae60;
+        }
+        .status-name {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+        }
+        .report-details {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+        }
+        .detail-value {
+            color: #666;
+        }
+        .not-found {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            border-radius: 3px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🏘️ Ward 11 Connect - Track Status</h1>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="search-section">
+                <h2 style="margin-bottom: 20px;">Track Your Report</h2>
+                <form method="get">
+                    <div class="form-group">
+                        <label for="ref">Enter Reference Number:</label>
+                        <input type="text" id="ref" name="ref" placeholder="e.g., W11-089" value="{{ reference }}">
+                    </div>
+                    <button type="submit">Search Status</button>
+                </form>
+            </div>
+
+            {% if issue %}
+            <div class="status-section">
+                <h3 class="status-title">Report Status: <span style="color: #667eea;">{{ issue.reference }}</span></h3>
+                
+                <div class="status-trace">
+                    <div class="status-item">
+                        <div class="status-circle active">✓</div>
+                        <div class="status-name">Received</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-circle {% if issue.status != 'Received' %}active{% endif %}">✓</div>
+                        <div class="status-name">In Progress</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-circle {% if issue.status == 'Fixed' %}active{% endif %}">✓</div>
+                        <div class="status-name">Fixed</div>
+                    </div>
+                </div>
+
+                <div class="report-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Issue Type:</span>
+                        <span class="detail-value">{{ issue.type|upper }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Current Status:</span>
+                        <span class="detail-value" style="color: #27ae60; font-weight: 600;">{{ issue.status }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Description:</span>
+                        <span class="detail-value">{{ issue.description }}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0; color: #27ae60; font-weight: 600;">
+                    ✓ You will receive an SMS notification when status updates!
+                </div>
+            </div>
+            {% elif reference %}
+            <div class="not-found">
+                ⚠️ No report found with reference number "{{ reference }}". Please check and try again.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

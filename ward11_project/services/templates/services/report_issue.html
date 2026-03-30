@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Issue - Ward 11 Connect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        .navbar {
+            background-color: #667eea;
+            color: white;
+            padding: 15px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .icon-selector {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .icon-btn {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .icon-btn.active {
+            border-color: #667eea;
+            background-color: #f0f4ff;
+        }
+        .icon-btn:hover {
+            border-color: #667eea;
+        }
+        .icon-btn-emoji {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        .icon-btn-text {
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .file-upload {
+            border: 2px dashed #e0e0e0;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .file-upload:hover {
+            border-color: #667eea;
+            background-color: #f0f4ff;
+        }
+        .file-upload input {
+            display: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #764ba2;
+        }
+        .confirmation {
+            background-color: #d5f4e6;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+            margin-bottom: 20px;
+        }
+        .confirmation-title {
+            color: #27ae60;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .reference-box {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .reference-label {
+            font-size: 12px;
+            color: #666;
+        }
+        .reference-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            font-family: monospace;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .instruction {
+            background-color: #fff3cd;
+            padding: 12px;
+            border-left: 4px solid #ffc107;
+            border-radius: 3px;
+            margin-bottom: 20px;
+        }
+        .voice-recorder {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+        .voice-controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .btn-voice {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-record {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-record:hover {
+            background-color: #c0392b;
+        }
+        .btn-stop {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-stop:hover {
+            background-color: #e67e22;
+        }
+        .btn-stop:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .recording-timer {
+            font-weight: 600;
+            color: #e74c3c;
+            font-size: 14px;
+        }
+        .voice-playback {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .voice-playback.active {
+            display: block;
+            border: 2px solid #27ae60;
+        }
+        .playback-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Bergville Ward 11 Connect - Report Issue</h1>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            {% if submitted %}
+            <!-- Confirmation Screen -->
+            <div class="confirmation">
+                <div class="confirmation-title">✓ Report Successfully Submitted!</div>
+                <p>Thank you for reporting this issue. Your report has been received and will be attended to shortly.</p>
+                
+                <div class="reference-box">
+                    <div class="reference-label">Your Reference Number:</div>
+                    <div class="reference-number">{{ reference_number }}</div>
+                    <p style="font-size: 12px; color: #666; margin-top: 8px;">Save this number to track your report status</p>
+                </div>
+            </div>
+
+            <div class="instruction">
+                ℹ️ You will receive an SMS confirmation and status updates at the phone number registered.
+            </div>
+
+            <a href="/" class="back-link">← Back to Home</a>
+            <br>
+            <a href="/track-status/?ref={{ reference_number }}" class="back-link">Track Status →</a>
+
+            {% else %}
+            <!-- Report Form -->
+            <h2 style="margin-bottom: 10px;">Report a Community Issue</h2>
+            <p style="color: #666; margin-bottom: 20px;">Select the type of issue and provide details below.</p>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Issue Type Selection -->
+                <label style="display: block; margin-bottom: 15px;">Select Issue Type:</label>
+                <div class="icon-selector">
+                    <button type="button" class="icon-btn {% if selected_type == 'water' %}active{% endif %}" onclick="selectType('water')">
+                       
+                        <div class="icon-btn-text">Water</div>
+                    </button>
+                    <button type="button" class="icon-btn {% if selected_type == 'electricity' %}active{% endif %}" onclick="selectType('electricity')">
+                       
+                        <div class="icon-btn-text">Electricity</div>
+                    </button>
+                    <button type="button" class="icon-btn {% if selected_type == 'roads' %}active{% endif %}" onclick="selectType('roads')">
+                       
+                        <div class="icon-btn-text">Roads</div>
+                    </button>
+                </div>
+                <input type="hidden" id="type" name="type" value="{{ selected_type }}">
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">Describe the Issue: *</label>
+                    <textarea id="description" name="description" placeholder="Be specific - location, severity, impact, etc." required></textarea>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label for="location">Street/Location: *</label>
+                    <input type="text" id="location" name="location" placeholder="e.g., Near Hambrook Primary School" required>
+                </div>
+
+                <!-- Contact Phone -->
+                <div class="form-group">
+                    <label for="phone">Phone Number (for SMS updates): </label>
+                    <input type="tel" id="phone" name="phone" placeholder="+27 123 456 789">
+                </div>
+
+                <!-- Voice Note Recording -->
+                <div class="form-group">
+                    <label>Add Voice Note (Optional):</label>
+                    <div class="voice-recorder">
+                        <p style="margin-bottom: 10px; color: #666; font-size: 13px;">🎤 Record a voice message instead of typing (useful if typing is difficult)</p>
+                        <div class="voice-controls">
+                            <button type="button" class="btn-voice btn-record" onclick="startRecording()">🔴 Start Recording</button>
+                            <button type="button" class="btn-voice btn-stop" id="stopBtn" onclick="stopRecording()" disabled>⏹️ Stop Recording</button>
+                            <span class="recording-timer" id="timer" style="display:none;">Recording: <span id="recordingTime">0:00</span></span>
+                        </div>
+                        <div class="voice-playback" id="playback">
+                            <div class="playback-info">✓ Voice note recorded successfully</div>
+                            <audio id="audioPlayback" controls style="width: 100%; margin-bottom: 10px;">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <button type="button" class="btn-voice" onclick="clearVoiceNote()" style="background-color: #95a5a6;">🗑️ Clear Recording</button>
+                        </div>
+                        <input type="hidden" id="voiceNote" name="voiceNote" value="">
+                    </div>
+                </div>
+
+                <!-- Photo Upload -->
+                <div class="form-group">
+                    <label>Attach Photo (Optional):</label>
+                    <div class="file-upload" onclick="document.getElementById('photo').click()">
+                        <input type="file" id="photo" name="photo" accept="image/*">
+                        <div style="color: #667eea; font-weight: 600;">📷 Click to upload photo</div>
+                        <p style="color: #999; font-size: 12px; margin-top: 8px;">or drag and drop</p>
+                    </div>
+                </div>
+
+                <button type="submit">Submit Report & Get Reference Number</button>
+            </form>
+
+            <p style="font-size: 12px; color: #999; margin-top: 15px; text-align: center;">
+                By submitting, you agree to our terms. Your report helps improve Ward 11 services.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let recordingStartTime;
+        let timerInterval;
+
+        function selectType(type) {
+            document.getElementById('type').value = type;
+            document.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.icon-btn').classList.add('active');
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                recordingStartTime = Date.now();
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    document.getElementById('audioPlayback').src = audioUrl;
+                    document.getElementById('playback').classList.add('active');
+                    document.getElementById('voiceNote').value = 'voice_note_recorded';
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').style.display = 'none';
+                };
+                
+                mediaRecorder.start();
+                document.getElementById('stopBtn').disabled = false;
+                document.querySelector('.btn-record').disabled = true;
+                document.getElementById('timer').style.display = 'inline-block';
+                startTimer();
+            } catch (error) {
+                alert('Microphone access required. Please allow microphone access to record voice notes.\n\nError: ' + error.message);
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                document.getElementById('stopBtn').disabled = true;
+                document.querySelector('.btn-record').disabled = false;
+            }
+        }
+
+        function clearVoiceNote() {
+            document.getElementById('audioPlayback').src = '';
+            document.getElementById('playback').classList.remove('active');
+            document.getElementById('voiceNote').value = '';
+            audioChunks = [];
+            document.getElementById('timer').style.display = 'none';
+            document.querySelector('.btn-record').disabled = false;
+        }
+
+        function startTimer() {
+            let seconds = 0;
+            timerInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                document.getElementById('recordingTime').textContent = 
+                    mins + ':' + (secs < 10 ? '0' : '') + secs;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
