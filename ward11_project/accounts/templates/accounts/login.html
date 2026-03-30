@@ -105,6 +105,33 @@
             font-size: 12px;
             color: #555;
         }
+        .error-banner {
+            background-color: #fadbd8;
+            padding: 12px;
+            border-left: 4px solid #e74c3c;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            color: #c0392b;
+            font-weight: 600;
+        }
+        .error-banner small {
+            display: block;
+            font-weight: normal;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        .form-group.error input,
+        .form-group.error select {
+            border-color: #e74c3c !important;
+            background-color: #fadbd8 !important;
+        }
+        .error-field-help {
+            color: #e74c3c;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -116,36 +143,40 @@
         </div>
 
         {% if error %}
-        <div style="background-color: #f8d7da; padding: 12px; border-left: 4px solid #f5c6cb; border-radius: 3px; margin-bottom: 20px; color: #721c24;">
-            ⚠️ {{ error }}
+        <div class="error-banner">
+            ❌ Login Failed<br>
+            <small>{{ error }}</small>
         </div>
         {% endif %}
 
         <form method="post">
             {% csrf_token %}
             
-            <div class="form-group">
-                <label for="village">Select Your Village:</label>
+            <div class="form-group {% if error %}error{% endif %}">
+                <label for="village">Select Your Village: <span style="color: #e74c3c;">*</span></label>
                 <select name="village" id="village" required>
                     <option value="">-- Choose Your Village --</option>
                     {% for village in villages %}
                     <option value="{{ village }}">{{ village }}</option>
                     {% endfor %}
                 </select>
+                {% if error %}<span class="error-field-help">⚠️ All fields are required</span>{% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="email">Email Address:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <div class="form-group {% if error %}error{% endif %}">
+                <label for="email">Email Address: <span style="color: #e74c3c;">*</span></label>
+                <input type="email" id="email" name="email" placeholder="e.g., john@example.com" required>
+                {% if error %}<span class="error-field-help">⚠️ Valid email required</span>{% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" placeholder="Enter password" required>
+            <div class="form-group {% if error %}error{% endif %}">
+                <label for="password">Password: <span style="color: #e74c3c;">*</span></label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                {% if error %}<span class="error-field-help">⚠️ Password required</span>{% endif %}
             </div>
 
             <div class="note">
-                ℹ️ Selecting your village ensures you only see reports relevant to your area.
+                💡 <strong>Village Selection:</strong> Selecting your village ensures you only see reports relevant to your area.
             </div>
 
             <button type="submit">Login to Ward 11 Connect</button>

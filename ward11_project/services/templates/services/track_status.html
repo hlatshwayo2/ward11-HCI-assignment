@@ -144,6 +144,67 @@
             border-radius: 3px;
             color: #856404;
         }
+        .status-message {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #27ae60;
+            border-radius: 5px;
+            margin-top: 15px;
+            color: #2e7d32;
+            line-height: 1.6;
+        }
+        .progress-bar {
+            background-color: #e0e0e0;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-fill {
+            background-color: #27ae60;
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .timeline-info {
+            background-color: #f0f4ff;
+            padding: 12px;
+            border-left: 4px solid #667eea;
+            border-radius: 3px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #333;
+        }
+        .error-message {
+            background-color: #fadbd8;
+            padding: 15px;
+            border-left: 4px solid #e74c3c;
+            border-radius: 3px;
+            color: #c0392b;
+        }
+        .support-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .support-link:hover {
+            background-color: #764ba2;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -168,44 +229,97 @@
             <div class="status-section">
                 <h3 class="status-title">Report Status: <span style="color: #667eea;">{{ issue.reference }}</span></h3>
                 
+                <!-- Progress Bar -->
+                <div style="margin: 20px 0;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ progress }}%;"></div>
+                    </div>
+                </div>
+                
+                <!-- Status Trace -->
                 <div class="status-trace">
                     <div class="status-item">
                         <div class="status-circle active">✓</div>
                         <div class="status-name">Received</div>
                     </div>
                     <div class="status-item">
-                        <div class="status-circle {% if issue.status != 'Received' %}active{% endif %}">✓</div>
+                        <div class="status-circle {% if issue.status != 'Received' %}active{% endif %}">{% if issue.status != 'Received' %}✓{% else %}2{% endif %}</div>
                         <div class="status-name">In Progress</div>
                     </div>
                     <div class="status-item">
-                        <div class="status-circle {% if issue.status == 'Fixed' %}active{% endif %}">✓</div>
+                        <div class="status-circle {% if issue.status == 'Fixed' %}active{% endif %}">{% if issue.status == 'Fixed' %}✓{% else %}3{% endif %}</div>
                         <div class="status-name">Fixed</div>
                     </div>
                 </div>
 
+                <!-- Natural Language Status Message -->
+                <div class="status-message">
+                    {{ status_message }}
+                </div>
+
+                <!-- Report Details Card -->
                 <div class="report-details">
                     <div class="detail-row">
                         <span class="detail-label">Issue Type:</span>
-                        <span class="detail-value">{{ issue.type|upper }}</span>
+                        <span class="detail-value">
+                            {% if issue.type == 'water' %}
+                                💧 Water
+                            {% elif issue.type == 'electricity' %}
+                                ⚡ Electricity
+                            {% else %}
+                                🛣️ Roads
+                            {% endif %}
+                        </span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Current Status:</span>
+                        <span class="detail-label">Reference:</span>
+                        <span class="detail-value" style="font-weight: 600; color: #667eea;">{{ issue.reference }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
                         <span class="detail-value" style="color: #27ae60; font-weight: 600;">{{ issue.status }}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Description:</span>
                         <span class="detail-value">{{ issue.description }}</span>
                     </div>
+                    {% if issue.created_time %}
+                    <div class="detail-row">
+                        <span class="detail-label">Reported:</span>
+                        <span class="detail-value">{{ issue.created_time }}</span>
+                    </div>
+                    {% endif %}
+                    {% if issue.updated_time %}
+                    <div class="detail-row">
+                        <span class="detail-label">Last Updated:</span>
+                        <span class="detail-value">{{ issue.updated_time }}</span>
+                    </div>
+                    {% endif %}
                 </div>
 
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0; color: #27ae60; font-weight: 600;">
-                    ✓ You will receive an SMS notification when status updates!
+                <!-- Timeline & Support -->
+                <div class="timeline-info">
+                    ⏱️ <strong>Timeline:</strong> We typically resolve issues within 5-7 business days. A service team will contact you soon to confirm access.
                 </div>
+
+                <div style="margin-top: 15px;">
+                    <a href="tel:+27123456789" class="support-link">📞 Contact Support</a>
+                </div>
+
+                <a href="/" class="back-link">← Back to Home</a>
             </div>
             {% elif reference %}
-            <div class="not-found">
-                ⚠️ No report found with reference number "{{ reference }}". Please check and try again.
+            <div class="error-message">
+                ❌ <strong>Report Not Found</strong><br>
+                No report found with reference number "<strong>{{ reference }}</strong>". Please check and try again. 
+                Reports must be from your village to display.
             </div>
+            <a href="/" class="back-link">← Back to Home</a>
+            {% elif error %}
+            <div class="error-message">
+                ❌ {{ error }}
+            </div>
+            <a href="/" class="back-link">← Back to Home</a>
             {% endif %}
         </div>
     </div>
