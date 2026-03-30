@@ -104,55 +104,25 @@
             color: #333;
             margin-bottom: 15px;
         }
-        .report-card {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            margin-bottom: 12px;
+        .report-item {
+            padding: 12px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 10px;
             background-color: #f9f9f9;
-            border-radius: 5px;
-            transition: all 0.3s;
-            cursor: pointer;
+            border-radius: 3px;
         }
-        .report-card:hover {
-            background-color: #f0f4ff;
-            border-color: #667eea;
+        .report-ref {
+            font-weight: bold;
+            color: #667eea;
         }
-        .report-icon {
-            font-size: 32px;
-            margin-right: 12px;
-        }
-        .report-content {
-            flex: 1;
-        }
-        .report-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        .report-meta {
+        .report-status {
             font-size: 12px;
-            color: #999;
-        }
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .status-badge.received {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
-        .status-badge.in-progress {
-            background-color: #fff3e0;
-            color: #f57c00;
-        }
-        .status-badge.fixed {
-            background-color: #d5f4e6;
             color: #27ae60;
+            padding: 3px 8px;
+            background-color: #d5f4e6;
+            border-radius: 12px;
+            display: inline-block;
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -174,7 +144,7 @@
         <div class="issue-categories">
             <a href="/report-issue/?type=water" style="text-decoration: none;">
                 <div class="category-card">
-                    <div class="category-icon">💧</div>
+                    
                     <h3>Water Issues</h3>
                     <p>Leaks, burst pipes, no water supply</p>
                     <button class="btn-primary">Report Water Issue</button>
@@ -183,7 +153,7 @@
 
             <a href="/report-issue/?type=electricity" style="text-decoration: none;">
                 <div class="category-card">
-                    <div class="category-icon">⚡</div>
+                    
                     <h3>Electricity Issues</h3>
                     <p>Power outages, broken lines, sparks</p>
                     <button class="btn-primary">Report Electricity Issue</button>
@@ -192,7 +162,7 @@
 
             <a href="/report-issue/?type=roads" style="text-decoration: none;">
                 <div class="category-card">
-                    <div class="category-icon">🛣️</div>
+                  
                     <h3>Road Issues</h3>
                     <p>Potholes, cracks, damaged surfaces</p>
                     <button class="btn-primary">Report Road Issue</button>
@@ -202,39 +172,14 @@
 
         {% if recent_reports %}
         <div class="recent-reports">
-            <h3>📋 Recent Reports in {{ user_village }}</h3>
-            <p style="color: #999; font-size: 12px; margin-bottom: 15px;">{{ total_reports }} report(s) from your area</p>
+            <h3>📋 Recent Reports in Your Area</h3>
             {% for report in recent_reports %}
-            <div class="report-card" onclick="location.href='/track-status/?ref={{ report.reference }}'">
-                <div class="report-icon">
-                    {% if report.type == 'water' %}
-                        💧
-                    {% elif report.type == 'electricity' %}
-                        ⚡
-                    {% else %}
-                        🛣️
-                    {% endif %}
-                </div>
-                <div class="report-content">
-                    <div class="report-title">{{ report.description|truncatewords:"5" }}</div>
-                    <div class="report-meta">
-                        Ref: <strong>{{ report.reference }}</strong> • 
-                        {% if report|add_created_time %}
-                            {{ report.created_time|default:"Recently" }}
-                        {% else %}
-                            Recently
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="status-badge {% if report.status == 'Received' %}received{% elif report.status == 'In Progress' %}in-progress{% else %}fixed{% endif %}">
-                    {{ report.status }}
-                </div>
+            <div class="report-item">
+                <span class="report-ref">{{ report.reference }}</span>
+                <span>{{ report.type|upper }}</span>
+                <span class="report-status">{{ report.status }}</span>
             </div>
             {% endfor %}
-        </div>
-        {% else %}
-        <div class="recent-reports">
-            <p style="color: #999; text-align: center; padding: 20px;">No reports yet from {{ user_village }}. Be the first to report an issue!</p>
         </div>
         {% endif %}
     </div>

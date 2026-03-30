@@ -166,36 +166,6 @@
             border-radius: 3px;
             margin-bottom: 20px;
         }
-        .error-message {
-            background-color: #fadbd8;
-            padding: 12px;
-            border-left: 4px solid #e74c3c;
-            border-radius: 3px;
-            margin-bottom: 20px;
-            color: #c0392b;
-            font-weight: 600;
-        }
-        .success-message {
-            background-color: #d5f4e6;
-            padding: 12px;
-            border-left: 4px solid #27ae60;
-            border-radius: 3px;
-            margin-bottom: 20px;
-            color: #27ae60;
-            font-weight: 600;
-        }
-        .form-group.has-error input,
-        .form-group.has-error textarea {
-            border-color: #e74c3c !important;
-            background-color: #fadbd8 !important;
-        }
-        .error-field-message {
-            color: #e74c3c;
-            font-weight: 600;
-            display: block;
-            margin-top: 5px;
-            font-size: 13px;
-        }
         .voice-recorder {
             border: 2px solid #e0e0e0;
             border-radius: 8px;
@@ -258,15 +228,6 @@
             color: #666;
             margin-bottom: 10px;
         }
-        .voice-guidance {
-            background-color: #e8f4f8;
-            padding: 12px;
-            border-left: 4px solid #3498db;
-            border-radius: 3px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: #2c3e50;
-        }
     </style>
 </head>
 <body>
@@ -278,17 +239,18 @@
         <div class="card">
             {% if submitted %}
             <!-- Confirmation Screen -->
-            <div class="success-message">✓ Report Successfully Submitted!</div>
-            
-            <p style="margin-bottom: 15px; color: #333;">Thank you for reporting this issue. Your report has been received and will be attended to shortly.</p>
+            <div class="confirmation">
+                <div class="confirmation-title">✓ Report Successfully Submitted!</div>
+                <p>Thank you for reporting this issue. Your report has been received and will be attended to shortly.</p>
                 
-            <div class="reference-box">
-                <div class="reference-label">Your Reference Number:</div>
-                <div class="reference-number">{{ reference_number }}</div>
-                <p style="font-size: 12px; color: #666; margin-top: 8px;">Save this number to track your report status</p>
+                <div class="reference-box">
+                    <div class="reference-label">Your Reference Number:</div>
+                    <div class="reference-number">{{ reference_number }}</div>
+                    <p style="font-size: 12px; color: #666; margin-top: 8px;">Save this number to track your report status</p>
+                </div>
             </div>
 
-            <div class="instruction" style="margin-top: 20px;">
+            <div class="instruction">
                 ℹ️ You will receive an SMS confirmation and status updates at the phone number registered.
             </div>
 
@@ -298,68 +260,53 @@
 
             {% else %}
             <!-- Report Form -->
-            
-            {% if error %}
-            <div class="error-message">❌ {{ error }}<br><small>Please correct this before submitting.</small></div>
-            {% endif %}
-            
-            {% if success_message %}
-            <div class="success-message">{{ success_message }}</div>
-            {% endif %}
-
             <h2 style="margin-bottom: 10px;">Report a Community Issue</h2>
-            <p style="color: #666; margin-bottom: 20px;">Your village: <strong>{{ user_village }}</strong></p>
+            <p style="color: #666; margin-bottom: 20px;">Select the type of issue and provide details below.</p>
 
             <form method="POST">
                 {% csrf_token %}
 
                 <!-- Issue Type Selection -->
-                <label style="display: block; margin-bottom: 15px;">Select Issue Type: <span style="color: #e74c3c;">*</span></label>
+                <label style="display: block; margin-bottom: 15px;">Select Issue Type:</label>
                 <div class="icon-selector">
                     <button type="button" class="icon-btn {% if selected_type == 'water' %}active{% endif %}" onclick="selectType('water')">
-                        <div class="icon-btn-emoji">💧</div>
+                       
                         <div class="icon-btn-text">Water</div>
                     </button>
                     <button type="button" class="icon-btn {% if selected_type == 'electricity' %}active{% endif %}" onclick="selectType('electricity')">
-                        <div class="icon-btn-emoji">⚡</div>
+                       
                         <div class="icon-btn-text">Electricity</div>
                     </button>
                     <button type="button" class="icon-btn {% if selected_type == 'roads' %}active{% endif %}" onclick="selectType('roads')">
-                        <div class="icon-btn-emoji">🛣️</div>
+                       
                         <div class="icon-btn-text">Roads</div>
                     </button>
                 </div>
-                <input type="hidden" id="issue_type" name="issue_type" value="{{ selected_type }}">
+                <input type="hidden" id="type" name="type" value="{{ selected_type }}">
 
                 <!-- Description -->
-                <div class="form-group {% if error %}has-error{% endif %}">
-                    <label for="description">What's the problem? <span style="color: #e74c3c;">*</span></label>
-                    <small style="color: #999; display: block; margin-bottom: 5px;">Include location, when it started, and what needs to be done</small>
-                    <textarea id="description" name="description" placeholder="e.g., Water leaking from main pipe near my house since this morning..." required></textarea>
-                    {% if error %}<span class="error-field-message">{{ error }}</span>{% endif %}
+                <div class="form-group">
+                    <label for="description">Describe the Issue: *</label>
+                    <textarea id="description" name="description" placeholder="Be specific - location, severity, impact, etc." required></textarea>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label for="location">Street/Location: *</label>
+                    <input type="text" id="location" name="location" placeholder="e.g., Near Hambrook Primary School" required>
                 </div>
 
                 <!-- Contact Phone -->
                 <div class="form-group">
-                    <label for="phone">Phone Number (Optional):</label>
-                    <small style="color: #999; display: block; margin-bottom: 5px;">For SMS updates. Example: +27 82 123 4567</small>
-                    <input type="tel" id="phone" name="phone" placeholder="+27 82 123 4567">
+                    <label for="phone">Phone Number (for SMS updates): </label>
+                    <input type="tel" id="phone" name="phone" placeholder="+27 123 456 789">
                 </div>
 
-                <!-- Voice Note Recording with Enhanced Guidance -->
+                <!-- Voice Note Recording -->
                 <div class="form-group">
                     <label>Add Voice Note (Optional):</label>
                     <div class="voice-recorder">
-                        <div class="voice-guidance">
-                            💡 <strong>Pro Tip:</strong> Speak for 10-30 seconds. Be specific about:
-                            <ul style="margin-top: 8px; margin-left: 20px;">
-                                <li>Where the problem is (street/location)</li>
-                                <li>When it started</li>
-                                <li>What action is needed</li>
-                            </ul>
-                        </div>
-                        
-                        <p style="margin-bottom: 10px; color: #666; font-size: 13px;">🎤 Having trouble typing? Tell us what happened</p>
+                        <p style="margin-bottom: 10px; color: #666; font-size: 13px;">🎤 Record a voice message instead of typing (useful if typing is difficult)</p>
                         <div class="voice-controls">
                             <button type="button" class="btn-voice btn-record" onclick="startRecording()">🔴 Start Recording</button>
                             <button type="button" class="btn-voice btn-stop" id="stopBtn" onclick="stopRecording()" disabled>⏹️ Stop Recording</button>
@@ -395,6 +342,7 @@
             {% endif %}
         </div>
     </div>
+
     <script>
         let mediaRecorder;
         let audioChunks = [];
@@ -402,7 +350,7 @@
         let timerInterval;
 
         function selectType(type) {
-            document.getElementById('issue_type').value = type;
+            document.getElementById('type').value = type;
             document.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
             event.target.closest('.icon-btn').classList.add('active');
         }
